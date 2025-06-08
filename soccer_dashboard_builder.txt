@@ -1,0 +1,25 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_excel('C:/Users/kmilo/Documents/Data_analyst_projects/7_Soccer_dashboard/football_analysis_dashboard/Data_base_soccer_teams.xlsx')
+
+
+# 1_Analysis of openness aspect
+
+position_openness = df.groupby(['position','openness'])['name'].count()
+
+position_openness = position_openness.reset_index()
+position_openness = position_openness.sort_values(by = ['position'], ascending = False)
+pivot_openness = position_openness.pivot_table(index = 'position', columns = 'openness', values = 'name')
+pivot_openness = pivot_openness.reset_index()
+pivot_openness = pivot_openness.fillna(0)
+pivot_openness = pivot_openness[['position', 'very high', 'high', 'medium', 'low']]
+
+pivot_openness.plot(kind = 'bar', x = 'position', ylabel = 'Number of players', title = 'Level of openness by position')
+
+pivot_openness['personality_aspect'] = 'openness'
+
+print(pivot_openness)
+
+plt.show()
