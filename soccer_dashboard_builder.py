@@ -1,7 +1,11 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from dash import Dash, html, dash_table
+import dash_bootstrap_components as dbc
+from dash import Dash, html, dash_table, dcc, callback, Output, Input
+import plotly.express as px
+
+
 
 df = pd.read_excel('C:/Users/kmilo/Documents/Data_analyst_projects/7_Soccer_dashboard/football_analysis_dashboard/Data_base_soccer_teams.xlsx')
 
@@ -88,18 +92,40 @@ df_final = df_final.rename(columns = {"very high":"very_high"})
 
 # initialize app
 
-app = Dash()
+external_stylesheets = [dbc.themes.BOOTSTRAP]
+app = Dash(__name__, external_stylesheets=external_stylesheets)
+
 
 # app layout
 
-app.layout = [html.Div(children= 'Soccer personalities table'), dash_table.DataTable(data=df_final.to_dict('records'),columns = [{"name": "Position", "id": "position"},
-            {"name": "Personality Aspect", "id": "personality_aspect"},
-            {"name": "Very High", "id": "very_high"},
-            {"name": "High", "id": "high"},
-            {"name": "Medium", "id": "medium"},
-            {"name": "Low", "id": "low"}], page_size=10)]
+aspects = df_final['personality_aspect'].unique()
+
+app.layout = dbc.Container([dbc.Row([dbc.Col(html.H2('Personalities Score Dashboard', className="text-center text-primary mb-4"), width=12)]), 
+            dbc.Row([dbc.Col([html.Label("Pick a personality aspect"), dcc.RadioItems( id= 'aspect-ratio', options=[{'label':aspect.title(), 'value':aspect} for aspect in aspects], value= aspects[0], inline=True)], width=12)]),
+            dbc.Row([dbc.Col([dash_table.DataTable(id = 'custom-table', page_size = 10, style_table={'overflowX':'auto'},style_cell={'textAlign':'center'})],width=6), dbc.Col([dcc.Graph(id = 'custom-graph')], width=6)])],fluid=True)
+
+# add control and interaction
+
+@app.callback([Output('custom-table', 'data'),
+               Output('custom-table', 'columns'),
+               Output('custom-graph', 'figure')],
+               [Input('aspect-ratio', 'value')])
+def update_content (picked_aspect):
+    df_filtered = df_final[df_final['personality_aspect'] == picked_aspect]
+
+    # Table
+    data = df_filtered.to_dict('records')
+    columns = [{"name": i, "id": i} for i in df_filtered.columns]
+
+    # Graph
+
+    fig = {'data':[{'x': df_filtered['position'], 'y':df_filtered['very_high'], 'type':'bar','name':'Very High'},
+                   {'x': df_filtered['position'], 'y':df_filtered['high'], 'type':'bar','name':'High'},
+                   {'x': df_filtered['position'], 'y':df_filtered['medium'], 'type':'bar','name':'Medium'},
+                   {'x': df_filtered['position'], 'y':df_filtered['low'], 'type':'bar','name':'Low'}],
+                   'layout':{'barmode':'stack', 'title': f'Distribution of {picked_aspect.title()} by position', 'xaxis':{'title':'Position'}, 'yaxis':{'title':'Number of players'},}}
+    return data, columns, fig
+
 # run the app
-
 if __name__ == '__main__':
-
     app.run(debug=True)
