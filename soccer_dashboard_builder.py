@@ -181,7 +181,7 @@ def update_content (picked_aspect):
         labels={'position': 'Position', 'proportion': 'Proportion', 'level': 'Nivel'}, category_orders={'position': ordered_positions}
     )
 
-    fig.update_layout(yaxis_tickformat=".0%", yaxis_title='Number of players')
+    fig.update_layout(yaxis_tickformat=".0%", yaxis_title='Percentage')
 
 
    
