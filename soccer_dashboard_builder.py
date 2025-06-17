@@ -100,9 +100,48 @@ app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 aspects = df_final['personality_aspect'].unique()
 
-app.layout = dbc.Container([dbc.Row([dbc.Col(html.H2('Personalities Score Dashboard', className="text-center text-primary mb-4"), width=12)]), 
-            dbc.Row([dbc.Col([html.Label("Pick a personality aspect"), dcc.RadioItems( id= 'aspect-ratio', options=[{'label':aspect.title(), 'value':aspect} for aspect in aspects], value= aspects[0], inline=True)], width=12)]),
-            dbc.Row([dbc.Col([dash_table.DataTable(id = 'custom-table', page_size = 10, style_table={'overflowX':'auto'},style_cell={'textAlign':'center'})],width=6), dbc.Col([dcc.Graph(id = 'custom-graph')], width=6)])],fluid=True)
+app.layout = dbc.Container([
+    dbc.Row([
+        dbc.Col(html.H2('Personalities Score Dashboard',
+                        style={'textAlign': 'center', 'color': "#0A0A0A", 'marginBottom': '20px'}),
+                width=12)
+    ]),
+    dbc.Row([
+        dbc.Col([
+            html.Label("Pick a personality aspect"),
+            dcc.RadioItems(
+                id='aspect-ratio',
+                options=[{'label': aspect.title(), 'value': aspect} for aspect in aspects],
+                value=aspects[0],
+                inline=True
+            )
+        ], width=12)
+    ], className="mb-4"),
+    dbc.Row([
+        dbc.Col([
+            dash_table.DataTable(
+                id='custom-table',
+                page_size=10,
+                style_table={'overflowX': 'auto', 'height': '400px', 'overflowY': 'auto'},
+                style_cell={'textAlign': 'center'}, style_data={
+        'height': '40px', 'lineHeight': '40px'
+    },
+    style_header={
+        'height': '50px',
+        'lineHeight': '50px',
+        'fontWeight': 'bold',
+        'backgroundColor': '#f8f9fa'
+    }  
+            )
+        ], width=6, style={'minHeight': '450px'}),
+
+        dbc.Col([
+            html.Div([
+                dcc.Graph(id='custom-graph', style={'height': '400px'})
+            ], style={'height': '100%'})
+        ], width=6, style={'minHeight': '450px'})
+    ])
+], fluid=True, style={'backgroundColor': '#F9F9F9', 'padding': '20px'})
 
 # add control and interaction
 
@@ -111,19 +150,41 @@ app.layout = dbc.Container([dbc.Row([dbc.Col(html.H2('Personalities Score Dashbo
                Output('custom-graph', 'figure')],
                [Input('aspect-ratio', 'value')])
 def update_content (picked_aspect):
+    # Table filtered
     df_filtered = df_final[df_final['personality_aspect'] == picked_aspect]
-
-    # Table
     data = df_filtered.to_dict('records')
     columns = [{"name": i, "id": i} for i in df_filtered.columns]
 
-    # Graph
+    # Transformation data
 
-    fig = {'data':[{'x': df_filtered['position'], 'y':df_filtered['very_high'], 'type':'bar','name':'Very High'},
-                   {'x': df_filtered['position'], 'y':df_filtered['high'], 'type':'bar','name':'High'},
-                   {'x': df_filtered['position'], 'y':df_filtered['medium'], 'type':'bar','name':'Medium'},
-                   {'x': df_filtered['position'], 'y':df_filtered['low'], 'type':'bar','name':'Low'}],
-                   'layout':{'barmode':'stack', 'title': f'Distribution of {picked_aspect.title()} by position', 'xaxis':{'title':'Position'}, 'yaxis':{'title':'Number of players'},}}
+    df_melted = df_filtered.melt(
+        id_vars=['position', 'personality_aspect'],
+        value_vars=['very_high', 'high', 'medium', 'low'],
+        var_name='level',
+        value_name='value'
+    )
+
+    df_melted['total'] = df_melted.groupby(['position', 'personality_aspect'])['value'].transform('sum')
+    df_melted['proportion'] = df_melted['value'] / df_melted['total']
+    order_df = df_melted[df_melted['level'] == 'very_high'].copy()
+    order_df = order_df.sort_values(by='proportion', ascending=False)
+    ordered_positions = order_df['position'].tolist()
+
+    fig = px.bar(
+        df_melted,
+        x='position',
+        y='proportion',
+        color='level',
+        barmode='stack',
+        text='value',
+        title=f'Distribution of relevance for {picked_aspect.title()} by position',
+        labels={'position': 'Position', 'proportion': 'Proportion', 'level': 'Nivel'}, category_orders={'position': ordered_positions}
+    )
+
+    fig.update_layout(yaxis_tickformat=".0%", yaxis_title='Number of players')
+
+
+   
     return data, columns, fig
 
 # run the app
