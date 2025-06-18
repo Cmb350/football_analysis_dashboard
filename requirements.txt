@@ -1,4 +1,4 @@
-dash
-dash-bootstrap-components
-pandas
-gunicorn
+dash==3.0.4
+dash-bootstrap-components==2.0.3
+pandas==2.1.4
+gunicorn==23.0.0
