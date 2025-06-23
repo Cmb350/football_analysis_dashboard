@@ -1,1 +1,1 @@
-web: gunicorn soccer_dashboard_builder:app
+web: gunicorn app:app
