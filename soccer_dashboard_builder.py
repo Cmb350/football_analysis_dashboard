@@ -1,10 +1,7 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import dash_bootstrap_components as dbc
 from dash import Dash, html, dash_table, dcc, callback, Output, Input
 import plotly.express as px
-
 
 
 df = pd.read_excel('C:/Users/kmilo/Documents/Data_analyst_projects/7_Soccer_dashboard/football_analysis_dashboard/Data_base_soccer_teams.xlsx')
@@ -21,8 +18,6 @@ pivot_openness = pivot_openness.reset_index()
 pivot_openness = pivot_openness.fillna(0)
 pivot_openness = pivot_openness[['position', 'very high', 'high', 'medium', 'low']]
 
-pivot_openness.plot(kind = 'bar', x = 'position', ylabel = 'Number of players', title = 'Level of openness by position')
-
 pivot_openness['personality_aspect'] = 'openness'
 
 # 2_Analysis of conscientiousness aspect
@@ -35,7 +30,6 @@ pivot_conscientiousness = pivot_conscientiousness.reset_index()
 pivot_conscientiousness = pivot_conscientiousness.fillna(0)
 pivot_conscientiousness = pivot_conscientiousness[['position', 'very high', 'high', 'medium', 'low']]
 
-pivot_conscientiousness.plot(kind = 'bar', x = 'position', ylabel = 'Number of players', title =  'Level of conscientiousness by position')
 
 pivot_conscientiousness['personality_aspect'] = 'conscientiousness'
 
@@ -49,7 +43,6 @@ pivot_extraversion = pivot_extraversion.reset_index()
 pivot_extraversion = pivot_extraversion.fillna(0)
 pivot_extraversion = pivot_extraversion[['position', 'very high', 'high', 'medium', 'low']]
 
-pivot_extraversion.plot(kind = 'bar', x = 'position', ylabel = 'Number of players', title =  'Level of extraversion by position')
 
 pivot_extraversion['personality_aspect'] = 'extraversion'
 
@@ -64,7 +57,6 @@ pivot_agreeableness = pivot_agreeableness.reset_index()
 pivot_agreeableness = pivot_agreeableness.fillna(0)
 pivot_agreeableness = pivot_agreeableness[['position', 'very high', 'high', 'medium', 'low']]
 
-pivot_agreeableness.plot(kind = 'bar', x = 'position', ylabel = 'Number of players', title =  'Level of agreeableness by position')
 
 pivot_agreeableness['personality_aspect'] =  'agreeableness'
 
@@ -77,8 +69,6 @@ pivot_neuroticism = position_neuroticism.pivot_table(index = 'position', columns
 pivot_neuroticism = pivot_neuroticism.reset_index()
 pivot_neuroticism = pivot_neuroticism.fillna(0)
 pivot_neuroticism = pivot_neuroticism[['position', 'high', 'medium', 'low']]
-
-pivot_neuroticism.plot(kind = 'bar', x = 'position', ylabel = 'Number of players', title =  'Level of neuroticism by position')
 
 pivot_neuroticism['personality_aspect'] =  'neuroticism'
 
