@@ -4,7 +4,7 @@ from dash import Dash, html, dash_table, dcc, callback, Output, Input
 import plotly.express as px
 
 
-df = pd.read_excel('C:/Users/kmilo/Documents/Data_analyst_projects/7_Soccer_dashboard/football_analysis_dashboard/Data_base_soccer_teams.xlsx')
+df = pd.read_excel('Data_base_soccer_teams.xlsx')
 
 
 # 1_Analysis of openness aspect
