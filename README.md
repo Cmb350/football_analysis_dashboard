@@ -27,7 +27,7 @@ Neuroticism: Denotes vulnerability to unpleasant emotions such as anxiety, anger
 2. Notebook with a detailed analysis for each step.
 3. A final dashboard to summarise the final insights in this project.
 4. Writing conclusions to guide the insights.
-
+5. App.py, which details the automation process to develop the final dashboard.
 
 # Final Dashboard 
 https://football-analysis-dashboard-big-5.onrender.com
