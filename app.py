@@ -178,4 +178,3 @@ def update_content (picked_aspect):
 
    
     return data, columns, fig
-
