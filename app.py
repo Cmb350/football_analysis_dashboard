@@ -85,6 +85,7 @@ df_final = df_final.rename(columns = {"very high":"very_high"})
 
 external_stylesheets = [dbc.themes.BOOTSTRAP]
 app = Dash(__name__, external_stylesheets=external_stylesheets)
+server= app.server
 
 
 # app layout
@@ -178,7 +179,3 @@ def update_content (picked_aspect):
    
     return data, columns, fig
 
-# run the app
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8050))
-    app.run_server(host='0.0.0.0', port=port, debug=False)
