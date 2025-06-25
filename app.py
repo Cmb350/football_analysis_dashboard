@@ -93,7 +93,7 @@ aspects = df_final['personality_aspect'].unique()
 
 app.layout = dbc.Container([
     dbc.Row([
-        dbc.Col(html.H2('Personalities Score Dashboard',
+        dbc.Col(html.H2('Big 5 football Dashboard',
                         style={'textAlign': 'center', 'color': "#0A0A0A", 'marginBottom': '20px'}),
                 width=12)
     ]),
